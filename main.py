@@ -5,7 +5,7 @@ import sys
 pygame.init()
 pygame.font.init()
 
-width,height=800,500
+width,height=500,500
 
 
 font = pygame.font.SysFont('Arial', 32)
@@ -21,31 +21,28 @@ class Level:
     # rysowanie planszy,
     # jeżeli kwadrawty nie wyhodzą kwadratowe- rysuje biały margines po lewej i prawej
     def draw_map(self):
-        size_h = height/self.amount_h
-        size_w = width/self.amount_w
-        zmiana = 1
-        margin_width = 0
-
-        if size_h != size_w: 
-            if size_h < size_w:
-                difference_in_size = size_w - size_h
-                size_w = (width/self.amount_w) - difference_in_size
-            else:
-                difference_in_size = size_h - size_w
-                size_h = (height/self.amount_h) - difference_in_size
-
-            margin_width = (difference_in_size * self.amount_w) /2
-            pygame.draw.rect(screen,(255,255,255),(0, 0, margin_width, (height -(size_h * self.amount_h))//2))
-
+        size_h = int(height/self.amount_h)
+        size_w = int(width/self.amount_w)
+        self.margin_h, self.margin_w = 0,0
+        
+        # adding margins
+        if size_h > size_w:
+            size_h = size_w
+            self.margin_h = (height - (size_h * self.amount_h)) / 2
+            if size_w < width/self.amount_w:
+                self.margin_w += (width - (size_w * self.amount_w)) / 2
+        else:
+            size_w = size_h
+            self.margin_w = (width - (size_w * self.amount_w)) / 2
+            if size_h < height/self.amount_h:
+                self.margin_h += (height - (size_h * self.amount_h)) / 2
+        
         for y in range(self.amount_h):
             for x in range(self.amount_w):
-                if zmiana % 2 == 1:
-                    pygame.draw.rect(screen,(0,255,127),((size_w * x) + margin_width, (size_h * y) ,size_w, size_h)) #jasny kwadrat
-                    zmiana += 1
+                if (x+y) % 2 == 0:
+                    pygame.draw.rect(screen,(0,255,127),((size_w * x) + self.margin_w, (size_h * y) + self.margin_h ,size_w, size_h)) 
                 else:
-                    pygame.draw.rect(screen,(60,179,113),((size_w * x) + margin_width, (size_h * y), size_w, size_h)) #ciemny kwadrat
-                    zmiana -= 1
-            zmiana += 1
+                    pygame.draw.rect(screen,(60,179,113),((size_w * x) + self.margin_w, (size_h * y) + self.margin_h, size_w, size_h))
 
 Level1= Level(10,10)
 
