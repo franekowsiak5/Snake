@@ -14,11 +14,13 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode((width,height))
 pygame.display.set_caption("Snake")
 
-body = pygame.image.load("body.png")
-head = pygame.image.load("head.png")
-apple = pygame.image.load("apple.png")
-
-clock_tick = 5
+body = pygame.image.load("body.png").convert()
+body.set_colorkey((255, 255, 255))
+head = pygame.image.load("head.png").convert()
+head.set_colorkey((255, 255, 255))
+apple = pygame.image.load("apple.png").convert()
+apple.set_colorkey((255, 255, 255))
+clock_tick = 4
 
 class Level:
     def __init__(self,amount_w,amount_h):
@@ -138,15 +140,35 @@ def restart_game():
     score = 0
     game_over = False
 
+main_menu = True
+while main_menu:
+    for event in pygame.event.get() :
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYDOWN:
+            main_menu = False
+    screen.fill((128,128,128))
+    title_text = font.render("Snake Game", True, (0, 255, 0))
+    instruction_text = font.render("Press any key to start", True, (0, 255, 0))
+    title_rect = title_text.get_rect(center=(width/2, height/2 - 20))
+    instruction_rect = instruction_text.get_rect(center=(width/2, height/2 + 20))
+    Level1.draw_map()
+    draw_food(food, Level1.size_w, Level1.size_h, Level1.margin_w, Level1.margin_h)
+    draw_snake(snake, Level1.size_w, Level1.size_h, Level1.margin_w, Level1.margin_h)
+    pygame.draw.rect(screen, (120, 120, 120), (title_rect.x - 10, title_rect.y - 100, title_rect.width + 20, title_rect.height + 20))
+    pygame.draw.rect(screen, (120, 120, 120), (instruction_rect.x - 10, instruction_rect.y - 100, instruction_rect.width + 20, instruction_rect.height + 20))
+    screen.blit(title_text, (title_rect.x, title_rect.y - 90))
+    screen.blit(instruction_text, (instruction_rect.x, instruction_rect.y - 90))
+    
+    pygame.display.flip()
+    
+
 while True:
     for event in pygame.event.get() :
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-        
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                print("klik")
         
 
         elif event.type == pygame.KEYDOWN and not game_over:
