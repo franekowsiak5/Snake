@@ -130,6 +130,12 @@ def update_game():
     if head in snake[1:]:
         game_over = True
 
+def record_score(score):
+    with open("scores.txt", "r") as file:
+        high_score = file.readlines()[0]
+    if score > int(high_score):
+        with open("scores.txt", "w") as file:
+            file.write(f"{score}\n")
 
 def restart_game():
     global snake, direction, next_direction, food, score, game_over
@@ -153,13 +159,17 @@ while main_menu:
     instruction_text = font.render("Press any key to start", True, (0, 255, 0))
     title_rect = title_text.get_rect(center=(width/2, height/2 - 20))
     instruction_rect = instruction_text.get_rect(center=(width/2, height/2 + 20))
+    score_text = font.render(f"High Score: {open('scores.txt', 'r').readlines()[0].strip()}", True, (0, 255, 0))
+    score_rect = score_text.get_rect(center=(width/2, height/2 + 60))
     Level1.draw_map()
     draw_food(food, Level1.size_w, Level1.size_h, Level1.margin_w, Level1.margin_h)
     draw_snake(snake, Level1.size_w, Level1.size_h, Level1.margin_w, Level1.margin_h)
     pygame.draw.rect(screen, (120, 120, 120), (title_rect.x - 10, title_rect.y - 100, title_rect.width + 20, title_rect.height + 20))
     pygame.draw.rect(screen, (120, 120, 120), (instruction_rect.x - 10, instruction_rect.y - 100, instruction_rect.width + 20, instruction_rect.height + 20))
+    pygame.draw.rect(screen, (120, 120, 120), (score_rect.x - 10, score_rect.y - 100, score_rect.width + 20, score_rect.height + 20))
     screen.blit(title_text, (title_rect.x, title_rect.y - 90))
     screen.blit(instruction_text, (instruction_rect.x, instruction_rect.y - 90))
+    screen.blit(score_text, (score_rect.x, score_rect.y - 90))
     
     pygame.display.flip()
     
@@ -211,6 +221,7 @@ while True:
     
 
     if game_over:
+        record_score(score)
         game_over_text = font.render("gameover, R-Restart", True, (255, 0, 0))
         text_rect = game_over_text.get_rect(center=(width/2, height/2))
         screen.blit(game_over_text, text_rect)
